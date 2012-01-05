@@ -26,7 +26,7 @@ api = twitter.Api(consumer_key=CONSUMER_KEY,
                   access_token_secret=ACCESS_TOKEN_SECRET)
 
 # TODO: support multiple search terms (but also need to support multiple responses)
-searches = ('"pete sakes" -"RT"', )
+searches = ('"pete sakes" -"RT"', '"god sakes" -"RT"')
 
 def main():
   while True:
@@ -48,16 +48,21 @@ def main():
       print "Replying to: %s" % s.text
       print
       if (not s.user.screen_name in users_replied_to):
-        postUpdate(reply_to_status_id=s.id, reply_to_username=s.user.screen_name)
+        peteOrGod = 'pete' if 'pete' in search else 'god'
+        postUpdate(reply_to_status_id=s.id, reply_to_username=s.user.screen_name, peteOrGod=peteOrGod)
         print "REPLIED! \n"
         print
 
       updateHomepage(public_timeline)
-      time.sleep(60)
+    time.sleep(60)
 
 
-def postUpdate(reply_to_status_id, reply_to_username):
-  status = api.PostUpdate('@%s I think you meant to say &ldquo;Pete&rsquo;s sake&rdquo; http://en.wiktionary.org/wiki/for_Pete%%27s_sake' % reply_to_username, in_reply_to_status_id=reply_to_status_id)
+def postUpdate(reply_to_status_id, reply_to_username, peteOrGod):
+  # kinda lame only supports 2 options for now, will adjust later to support stuff like 'fuck'
+  if (peteOrGod is 'pete'):
+    status = api.PostUpdate('@%s I think you meant to say &ldquo;Pete&rsquo;s sake&rdquo; http://en.wiktionary.org/wiki/for_Pete%%27s_sake' % reply_to_username, in_reply_to_status_id=reply_to_status_id)
+  else:
+    status = api.PostUpdate('@%s I think you meant to say &ldquo;God&rsquo;s sake&rdquo; http://en.wiktionary.org/wiki/for_God%%27s_sake' % reply_to_username, in_reply_to_status_id=reply_to_status_id)
   print status.text
 
 
@@ -71,6 +76,8 @@ def updateHomepage(statuses):
 
   htmlFile = open('public/index.html', 'w')
   html = u"""
+  <!DOCTYPE html>
+  <!-- Don't bother editing this, it's auto-generated. -->
   <html>
     <head>
       <title>For Pete's sake!</title>
