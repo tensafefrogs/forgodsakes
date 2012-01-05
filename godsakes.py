@@ -32,7 +32,12 @@ def main():
   while True:
     for search in searches:
       # find pete sakes references, but exclude RTs
-      statuses = api.GetSearch(search)
+      try:
+        statuses = api.GetSearch(search)
+      except:
+        # API errors happen sometimes
+        time.sleep(60)
+        continue
       print "search is %s" % search
 
       # Get my timeline to see who i've recently replied to (and don't reply to them again)
@@ -54,16 +59,17 @@ def main():
         print
 
       updateHomepage(public_timeline)
-    time.sleep(60)
+    time.sleep(120)
 
 
 def postUpdate(reply_to_status_id, reply_to_username, peteOrGod):
   # kinda lame only supports 2 options for now, will adjust later to support stuff like 'fuck'
   if (peteOrGod is 'pete'):
-    status = api.PostUpdate('@%s I think you meant to say &ldquo;Pete&rsquo;s sake&rdquo; http://en.wiktionary.org/wiki/for_Pete%%27s_sake' % reply_to_username, in_reply_to_status_id=reply_to_status_id)
+    status = '@%s I think you meant to say &ldquo;Pete&rsquo;s sake&rdquo; http://en.wiktionary.org/wiki/for_Pete%%27s_sake' % reply_to_username
   else:
-    status = api.PostUpdate('@%s I think you meant to say &ldquo;God&rsquo;s sake&rdquo; http://en.wiktionary.org/wiki/for_God%%27s_sake' % reply_to_username, in_reply_to_status_id=reply_to_status_id)
-  print status.text
+    status = '@%s I think you meant to say &ldquo;God&rsquo;s sake&rdquo; http://en.wiktionary.org/wiki/for_God%%27s_sake' % reply_to_username
+  posted_status = api.PostUpdate(status, in_reply_to_status_id=reply_to_status_id)
+  print posted_status.text
 
 
 # Update the html page with the current front page of tweets: 
