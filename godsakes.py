@@ -4,7 +4,7 @@ import ConfigParser
 import time
 import twitter
 
-# Requires a config file (config.vfg)that contains your
+# Requires a config file (config.cfg)that contains your
 # access tokens from twitter. Looks like this:
 # [tokens]
 # consumer_key = <consumer key>
