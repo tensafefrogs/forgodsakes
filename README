@@ -1,3 +1,1 @@
-Simple Twitter bot in python that watches twitter for mentions of terms like "Pete sakes" and corrects people (they should be saying "Pete's sake."
-
-I may add support for other simple stuff like multiple seach terms (with multiple replies) since twitter people are fun to play with.
+Simple Twitter bot in python that watches twitter for mentions of terms like "Pete sakes" and corrects people (they should be saying "Pete's sake.")
