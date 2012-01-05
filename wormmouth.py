@@ -26,7 +26,7 @@ api = twitter.Api(consumer_key=CONSUMER_KEY,
                   access_token_secret=ACCESS_TOKEN_SECRET)
 
 # TODO: support multiple search terms (but also need to support multiple responses)
-searches = ('"baited breath" -"RT" -cheese -mouse -mousetrap -mousetraps -bated', )
+searches = ('"baited breath" -"RT" -cheese -mouse -mousetrap -mousetraps -bated -fish', )
 
 def main():
   while True:
@@ -49,9 +49,9 @@ def main():
 
       s = statuses[0]
       print "Is user replied to already?: %s " % (s.user.screen_name in users_replied_to)
-      print "Replying to: %s" % s.text
-      print
       if (not s.user.screen_name in users_replied_to):
+        print
+        print "Replying to: %s - %s" % (s.user.screen_name, s.text)
         postUpdate(reply_to_status_id=s.id, reply_to_username=s.user.screen_name)
         print "REPLIED! \n"
         print
@@ -62,8 +62,8 @@ def main():
 
 def postUpdate(reply_to_status_id, reply_to_username):
   status = '@%s I think you meant to say &ldquo;bated breath&rdquo;' % reply_to_username
-  posted_status = api.PostUpdate(status, in_reply_to_status_id=reply_to_status_id)
-  print posted_status.text
+  #posted_status = api.PostUpdate(status, in_reply_to_status_id=reply_to_status_id)
+  #print posted_status.text
 
 
 # Update the html page with the current front page of tweets:
