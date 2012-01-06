@@ -1,4 +1,5 @@
 #!/home/deconcep/env/bin/python
+# coding=utf-8
 
 import ConfigParser
 import time
@@ -29,6 +30,9 @@ api = twitter.Api(consumer_key=CONSUMER_KEY,
 searches = ('"pete sakes" -"RT"', '"god sakes" -"RT"')
 
 def main():
+  # resets whenever the script is re-run, so may reply to someone again
+  # should cache this info somehow
+  users_replied_to = [];
   while True:
     for search in searches:
       # find pete sakes references, but exclude RTs
@@ -42,7 +46,6 @@ def main():
 
       # Get my timeline to see who i've recently replied to (and don't reply to them again)
       public_timeline = api.GetUserTimeline('thesakeof')
-      users_replied_to = [];
 
       for s in public_timeline:
         print s.GetInReplyToScreenName()
@@ -65,23 +68,23 @@ def main():
 def postUpdate(reply_to_status_id, reply_to_username, peteOrGod):
   # kinda lame only supports 2 options for now, will adjust later to support stuff like 'fuck'
   if (peteOrGod is 'pete'):
-    status = '@%s I think you meant to say &ldquo;Pete&rsquo;s sake&rdquo; http://en.wiktionary.org/wiki/for_Pete%%27s_sake' % reply_to_username
+    status = u'@%s I think you meant to say “Pete’s sake” http://en.wiktionary.org/wiki/for_Pete%%27s_sake' % reply_to_username
   else:
-    status = '@%s I think you meant to say &ldquo;God&rsquo;s sake&rdquo; http://en.wiktionary.org/wiki/for_God%%27s_sake' % reply_to_username
+    status = u'@%s I think you meant to say “God’s sake” http://en.wiktionary.org/wiki/for_God%%27s_sake' % reply_to_username
   posted_status = api.PostUpdate(status, in_reply_to_status_id=reply_to_status_id)
   print posted_status.text
 
 
-# Update the html page with the current front page of tweets: 
+# Update the html page with the current front page of tweets:
 # http://godsakes.geoffstearns.com/
-def updateHomepage(statuses): 
-  status_template = u'<blockquote class="twitter-tweet tw-align-center" data-in-reply-to="%(reply_to_id)s"><p>@<a href="https://twitter.com/%(screen_name)s">%(screen_name)s</a> %(tweet_text)s</p>&mdash; Pete (@thesakeof) <a href="https://twitter.com/thesakeof/status/%(tweet_id)s" data-datetime="%(tweet_datetime)s">%(tweet_date)s</a></blockquote>'
+def updateHomepage(statuses):
+  status_template = '<blockquote class="twitter-tweet tw-align-center" data-in-reply-to="%(reply_to_id)s"><p>@<a href="https://twitter.com/%(screen_name)s">%(screen_name)s</a> %(tweet_text)s</p>&mdash; Pete (@thesakeof) <a href="https://twitter.com/thesakeof/status/%(tweet_id)s" data-datetime="%(tweet_datetime)s">%(tweet_date)s</a></blockquote>'
   statushtml = []
   for s in statuses:
     statushtml.append(status_template % { 'reply_to_id': s.GetInReplyToStatusId(), 'screen_name': s.user.screen_name, 'tweet_text': s.text, 'tweet_id': s.id, 'tweet_datetime': s.created_at, 'tweet_date': s.created_at })
 
   htmlFile = open('public/index.html', 'w')
-  html = u"""
+  html = """
   <!DOCTYPE html>
   <!-- Don't bother editing this, it's auto-generated. -->
   <html>
@@ -89,13 +92,13 @@ def updateHomepage(statuses):
       <title>For Pete's sake!</title>
     </head>
     <body>
-      %s  
+      %s
       <script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
     </body>
   </html>
   """ % (''.join(statushtml))
   #print html
-  htmlFile.write(html)
+  htmlFile.write(html.encode('utf-8'))
   htmlFile.close()
 
 #postUpdate('tensafefrogs')

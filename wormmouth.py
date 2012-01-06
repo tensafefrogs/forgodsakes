@@ -1,4 +1,5 @@
 #!/home/deconcep/env/bin/python
+# coding=utf-8
 
 import ConfigParser
 import time
@@ -49,33 +50,38 @@ def main():
 
       s = statuses[0]
       print "Is user replied to already?: %s " % (s.user.screen_name in users_replied_to)
+      print
       if (not s.user.screen_name in users_replied_to):
         print
         print "Replying to: %s - %s" % (s.user.screen_name, s.text)
         postUpdate(reply_to_status_id=s.id, reply_to_username=s.user.screen_name)
         print "REPLIED! \n"
         print
+      else:
+        print '--------'
 
       updateHomepage(public_timeline)
     time.sleep(120)
 
 
 def postUpdate(reply_to_status_id, reply_to_username):
-  status = '@%s I think you meant to say &ldquo;bated breath&rdquo;' % reply_to_username
-  #posted_status = api.PostUpdate(status, in_reply_to_status_id=reply_to_status_id)
-  #print posted_status.text
+  status = u'@%s I think you meant to say “bated breath”' % reply_to_username
+  posted_status = api.PostUpdate(status, in_reply_to_status_id=reply_to_status_id)
+  print posted_status.text
+  print
+  print '--------'
 
 
 # Update the html page with the current front page of tweets:
 # http://godsakes.geoffstearns.com/
 def updateHomepage(statuses):
-  status_template = u'<blockquote class="twitter-tweet tw-align-center" data-in-reply-to="%(reply_to_id)s"><p>@<a href="https://twitter.com/%(screen_name)s">%(screen_name)s</a> %(tweet_text)s</p>&mdash; Worm Mouth (@WormMouth) <a href="https://twitter.com/wormmouth/status/%(tweet_id)s" data-datetime="%(tweet_datetime)s">%(tweet_date)s</a></blockquote>'
+  status_template = '<blockquote class="twitter-tweet tw-align-center" data-in-reply-to="%(reply_to_id)s"><p>@<a href="https://twitter.com/%(screen_name)s">%(screen_name)s</a> %(tweet_text)s</p>&mdash; Worm Mouth (@WormMouth) <a href="https://twitter.com/wormmouth/status/%(tweet_id)s" data-datetime="%(tweet_datetime)s">%(tweet_date)s</a></blockquote>'
   statushtml = []
   for s in statuses:
     statushtml.append(status_template % { 'reply_to_id': s.GetInReplyToStatusId(), 'screen_name': s.user.screen_name, 'tweet_text': s.text, 'tweet_id': s.id, 'tweet_datetime': s.created_at, 'tweet_date': s.created_at })
 
   htmlFile = open('public/wormindex.html', 'w')
-  html = u"""
+  html = """
   <!DOCTYPE html>
   <!-- Don't bother editing this, it's auto-generated. -->
   <html>
@@ -89,7 +95,7 @@ def updateHomepage(statuses):
   </html>
   """ % (''.join(statushtml))
   #print html
-  htmlFile.write(html)
+  htmlFile.write(html.encode('utf-8'))
   htmlFile.close()
 
 #postUpdate('tensafefrogs')
