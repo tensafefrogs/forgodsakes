@@ -1,1 +1,3 @@
 Simple Twitter bot in python that watches twitter for mentions of terms like "Pete sakes" and corrects people (they should be saying "Pete's sake.")
+
+Now includes wormmouth.py, who likes to correct people who say "baited breath." Why would you put worms in your mouth?
