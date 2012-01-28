@@ -27,7 +27,7 @@ api = twitter.Api(consumer_key=CONSUMER_KEY,
                   access_token_secret=ACCESS_TOKEN_SECRET)
 
 # TODO: support multiple search terms (but also need to support multiple responses)
-searches = ('"pete sakes" -"RT"', '"god sakes" -"RT"')
+searches = ('"god sakes" -"RT"', )
 
 def main():
   # resets whenever the script is re-run, so may reply to someone again
@@ -45,13 +45,20 @@ def main():
       print "search is %s" % search
 
       # Get my timeline to see who i've recently replied to (and don't reply to them again)
-      public_timeline = api.GetUserTimeline('thesakeof')
+      try:
+        public_timeline = api.GetUserTimeline('thesakeof')
+      except:
+        time.sleep(60)
+        continue
 
       for s in public_timeline:
         print s.GetInReplyToScreenName()
         users_replied_to.append(s.GetInReplyToScreenName())
 
-      s = statuses[0]
+      try:
+        s = statuses[0]
+      except:
+        print "no tweets!"
       print "Is user replied to already?: %s " % (s.user.screen_name in users_replied_to)
       print "Replying to: %s" % s.text
       print
@@ -71,8 +78,11 @@ def postUpdate(reply_to_status_id, reply_to_username, peteOrGod):
     status = u'@%s I think you meant to say “Pete’s sake” http://en.wiktionary.org/wiki/for_Pete%%27s_sake' % reply_to_username
   else:
     status = u'@%s I think you meant to say “God’s sake” http://en.wiktionary.org/wiki/for_God%%27s_sake' % reply_to_username
-  posted_status = api.PostUpdate(status, in_reply_to_status_id=reply_to_status_id)
-  print posted_status.text
+  try:
+    posted_status = api.PostUpdate(status, in_reply_to_status_id=reply_to_status_id)
+    print posted_status.text
+  except:
+    print '--- update failed, will try again ---'
 
 
 # Update the html page with the current front page of tweets:
