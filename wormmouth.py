@@ -33,22 +33,32 @@ def main():
   while True:
     for search in searches:
       try:
+        print 'doing search...'
         statuses = api.GetSearch(search)
       except:
         # API errors happen sometimes
+        print 'API error?'
         time.sleep(60)
         continue
       print "search is %s" % search
 
       # Get my timeline to see who i've recently replied to (and don't reply to them again)
-      public_timeline = api.GetUserTimeline('wormmouth')
+      try:
+        public_timeline = api.GetUserTimeline('wormmouth')
+      except:
+        print 'couldn\'t get user timeline'
+        time.sleep(30)
+        continue
       users_replied_to = [];
 
       for s in public_timeline:
         print s.GetInReplyToScreenName()
         users_replied_to.append(s.GetInReplyToScreenName())
 
-      s = statuses[0]
+      try:
+        s = statuses[0]
+      except:
+        print "no tweets!"
       print "Is user replied to already?: %s " % (s.user.screen_name in users_replied_to)
       print
       if (not s.user.screen_name in users_replied_to):
@@ -61,15 +71,18 @@ def main():
         print '--------'
 
       updateHomepage(public_timeline)
-    time.sleep(120)
+    time.sleep(10)
 
 
 def postUpdate(reply_to_status_id, reply_to_username):
-  status = u'@%s I think you meant to say “bated breath”' % reply_to_username
-  posted_status = api.PostUpdate(status, in_reply_to_status_id=reply_to_status_id)
-  print posted_status.text
-  print
-  print '--------'
+  status = u'@%s I think you meant to say “bated breath” ... Have a nice day!' % reply_to_username
+  try:
+    posted_status = api.PostUpdate(status, in_reply_to_status_id=reply_to_status_id)
+    print posted_status.text
+    print
+    print '--------'
+  except:
+    print '--- post failed, will try again ---'
 
 
 # Update the html page with the current front page of tweets:
